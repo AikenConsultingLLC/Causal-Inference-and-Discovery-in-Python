@@ -19,7 +19,8 @@ from sklearn.model_selection import KFold
 from torch.utils.data import Dataset, TensorDataset, DataLoader, RandomSampler, SequentialSampler
 
 from transformers import BertTokenizer
-from transformers import BertModel, BertPreTrainedModel, AdamW, BertConfig
+from transformers import BertModel, BertPreTrainedModel, BertConfig
+from torch.optim import AdamW
 from transformers import get_linear_schedule_with_warmup
 
 from transformers import DistilBertTokenizer
@@ -286,7 +287,10 @@ class CausalBertWrapper:
             encoded_sent = tokenizer.encode_plus(W, add_special_tokens=True,
                 max_length=128,
                 truncation=True,
-                pad_to_max_length=True)
+                padding='max_length')
+            
+            if i < 5:
+                print(f"DEBUG: i={i}, len={len(encoded_sent['input_ids'])}")
 
             out['W_ids'].append(encoded_sent['input_ids'])
             out['W_mask'].append(encoded_sent['attention_mask'])
